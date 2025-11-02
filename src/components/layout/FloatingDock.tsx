@@ -26,7 +26,7 @@ export function FloatingDock() {
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
       <div
         ref={dockRef}
-        className="flex items-end gap-2 px-4 py-3 bg-background/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl"
+        className="flex items-end gap-4 px-8 py-3 bg-background/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl"
         onMouseLeave={() => setHoveredIndex(null)}
       >
         {navItems.map((item, index) => (
@@ -47,25 +47,15 @@ export function FloatingDock() {
             }}
           >
             {({ isActive }) => (
-              <>
-                <div
-                  className={`p-3 rounded-xl transition-colors ${
-                    isActive
-                      ? "bg-primary/10"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <span
-                  className="text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{
-                    opacity: hoveredIndex === index ? 1 : 0,
-                  }}
-                >
-                  {item.title}
-                </span>
-              </>
+              <div
+                className={`p-3 rounded-xl transition-colors ${
+                  isActive
+                    ? "bg-primary/10"
+                    : "hover:bg-muted"
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+              </div>
             )}
           </NavLink>
         ))}
@@ -84,14 +74,6 @@ export function FloatingDock() {
           <div className="p-3 rounded-xl hover:bg-muted transition-colors">
             <LogIn className="h-5 w-5" />
           </div>
-          <span
-            className="text-xs font-medium whitespace-nowrap transition-opacity"
-            style={{
-              opacity: hoveredIndex === navItems.length ? 1 : 0,
-            }}
-          >
-            Sign In
-          </span>
         </button>
       </div>
     </div>
