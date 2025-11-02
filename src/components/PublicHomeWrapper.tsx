@@ -34,8 +34,6 @@ export default function PublicHomeWrapper() {
         onBlogClick={handleBlogClick}
       />
       
-      <AboutAuthorSection />
-      
       <TopicsSection 
         tags={allTags} 
         selectedTag={selectedTag} 
@@ -49,6 +47,8 @@ export default function PublicHomeWrapper() {
         selectedTag={selectedTag}
         onBlogClick={handleBlogClick} 
       />
+      
+      <AboutAuthorSection />
       
       <NewsletterSection />
     </div>
