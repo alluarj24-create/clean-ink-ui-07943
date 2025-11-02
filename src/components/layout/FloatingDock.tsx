@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { Home, Search, User, Mail, LogIn } from "lucide-react";
+import { Home, Search, User, Mail, LogIn, Moon, Sun } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -13,6 +14,7 @@ const navItems = [
 export function FloatingDock() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const dockRef = useRef<HTMLDivElement>(null);
+  const { theme, setTheme } = useTheme();
 
   const getScale = (index: number) => {
     if (hoveredIndex === null) return 1;
@@ -60,14 +62,29 @@ export function FloatingDock() {
           </NavLink>
         ))}
         
-        <div className="w-px h-8 bg-border/50 mx-1" />
-        
         <button
           onMouseEnter={() => setHoveredIndex(navItems.length)}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="relative flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-all duration-300 ease-out"
           style={{
             transform: `scale(${getScale(navItems.length)}) translateY(${
               getScale(navItems.length) === 1.5 ? "-8px" : getScale(navItems.length) === 1.25 ? "-4px" : "0"
+            })`,
+          }}
+        >
+          <div className="p-3 rounded-xl hover:bg-muted transition-colors">
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </div>
+        </button>
+        
+        <div className="w-px h-8 bg-border/50 mx-1" />
+        
+        <button
+          onMouseEnter={() => setHoveredIndex(navItems.length + 1)}
+          className="relative flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-all duration-300 ease-out"
+          style={{
+            transform: `scale(${getScale(navItems.length + 1)}) translateY(${
+              getScale(navItems.length + 1) === 1.5 ? "-8px" : getScale(navItems.length + 1) === 1.25 ? "-4px" : "0"
             })`,
           }}
         >
