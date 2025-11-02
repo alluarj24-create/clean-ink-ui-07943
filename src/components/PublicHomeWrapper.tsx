@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { demoBlogs } from "@/data/mockBlogs";
 import HeroSection from "@/components/home/HeroSection";
 import TopicsSection from "@/components/home/TopicsSection";
+import RecentHighlightsSection from "@/components/home/RecentHighlightsSection";
+import AboutAuthorSection from "@/components/home/AboutAuthorSection";
+import FeaturedTopicsSection from "@/components/home/FeaturedTopicsSection";
+import NewsletterSection from "@/components/home/NewsletterSection";
 import LatestStoriesSection from "@/components/home/LatestStoriesSection";
 
 export default function PublicHomeWrapper() {
@@ -24,16 +28,29 @@ export default function PublicHomeWrapper() {
   return (
     <div className="min-h-screen w-full">
       <HeroSection blog={featuredBlog} onBlogClick={handleBlogClick} />
+      
+      <RecentHighlightsSection 
+        blogs={demoBlogs}
+        onBlogClick={handleBlogClick}
+      />
+      
+      <AboutAuthorSection />
+      
       <TopicsSection 
         tags={allTags} 
         selectedTag={selectedTag} 
         onTagSelect={setSelectedTag} 
       />
+      
+      <FeaturedTopicsSection />
+      
       <LatestStoriesSection 
         blogs={filteredBlogs} 
         selectedTag={selectedTag}
         onBlogClick={handleBlogClick} 
       />
+      
+      <NewsletterSection />
     </div>
   );
 }
