@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminLoginPage from "./pages/AdminLogin";
 import AdminHomePage from "./pages/admin/AdminHome";
+import AnalyticsPage from "./pages/admin/Analytics";
 import BlogsPage from "./pages/admin/Blogs";
 import DraftsPage from "./pages/admin/Drafts";
 import NewBlogPage from "./pages/admin/NewBlog";
@@ -42,6 +43,7 @@ const App = () => (
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin/home" element={<AdminHomePage />} />
+          <Route path="/admin/analytics" element={<AnalyticsPage />} />
           <Route path="/admin/blogs" element={<BlogsPage />} />
           <Route path="/admin/drafts" element={<DraftsPage />} />
           <Route path="/admin/blogs/new" element={<NewBlogPage />} />

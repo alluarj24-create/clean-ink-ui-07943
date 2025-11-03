@@ -4,10 +4,10 @@ import { demoBlogs } from "@/data/mockBlogs";
 import HeroSection from "@/components/home/HeroSection";
 import TopicsSection from "@/components/home/TopicsSection";
 import RecentHighlightsSection from "@/components/home/RecentHighlightsSection";
-import AboutAuthorSection from "@/components/home/AboutAuthorSection";
-import FeaturedTopicsSection from "@/components/home/FeaturedTopicsSection";
-import NewsletterSection from "@/components/home/NewsletterSection";
+import PopularPostsSection from "@/components/home/PopularPostsSection";
+import ReadingStatsSection from "@/components/home/ReadingStatsSection";
 import LatestStoriesSection from "@/components/home/LatestStoriesSection";
+import CTASection from "@/components/home/CTASection";
 
 export default function PublicHomeWrapper() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -40,7 +40,12 @@ export default function PublicHomeWrapper() {
         onTagSelect={setSelectedTag} 
       />
       
-      <FeaturedTopicsSection />
+      <PopularPostsSection 
+        blogs={demoBlogs}
+        onBlogClick={handleBlogClick}
+      />
+      
+      <ReadingStatsSection />
       
       <LatestStoriesSection 
         blogs={filteredBlogs} 
@@ -48,9 +53,7 @@ export default function PublicHomeWrapper() {
         onBlogClick={handleBlogClick} 
       />
       
-      <AboutAuthorSection />
-      
-      <NewsletterSection />
+      <CTASection />
     </div>
   );
 }
