@@ -222,6 +222,7 @@ export default function EditDraftPage() {
                 <TiptapEditor 
                   content={content}
                   onUpdate={(html) => setContent(html)}
+                  showToolbar={false}
                 />
                 <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground border-t pt-4">
                   <span>{content.length} characters</span>

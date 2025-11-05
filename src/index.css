@@ -119,6 +119,142 @@ All colors MUST be HSL.
   }
 }
 
+/* Blog Content Styling - Enhanced for all Tiptap features */
+@layer components {
+  .blog-content {
+    @apply text-foreground;
+  }
+
+  /* Headings */
+  .blog-content h1 {
+    @apply text-4xl font-serif font-bold mb-6 mt-8 text-foreground;
+  }
+
+  .blog-content h2 {
+    @apply text-3xl font-serif font-bold mb-4 mt-8 text-foreground;
+  }
+
+  .blog-content h3 {
+    @apply text-2xl font-serif font-bold mb-3 mt-6 text-foreground;
+  }
+
+  /* Paragraphs */
+  .blog-content p {
+    @apply mb-6 leading-relaxed text-foreground;
+  }
+
+  /* Links */
+  .blog-content a {
+    @apply text-primary underline underline-offset-4 hover:text-primary/80 transition-colors;
+  }
+
+  /* Strong and Emphasis */
+  .blog-content strong {
+    @apply font-bold text-foreground;
+  }
+
+  .blog-content em {
+    @apply italic;
+  }
+
+  /* Code */
+  .blog-content code {
+    @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground;
+  }
+
+  .blog-content pre {
+    @apply bg-muted p-4 rounded-lg overflow-x-auto mb-6 border border-border;
+  }
+
+  .blog-content pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+
+  /* Blockquotes */
+  .blog-content blockquote {
+    @apply border-l-4 border-primary pl-6 py-2 my-6 italic bg-muted/30 rounded-r-lg;
+  }
+
+  .blog-content blockquote p {
+    @apply mb-0;
+  }
+
+  /* Lists */
+  .blog-content ul:not([data-type="taskList"]) {
+    @apply list-disc list-outside ml-6 mb-6 space-y-2;
+  }
+
+  .blog-content ol {
+    @apply list-decimal list-outside ml-6 mb-6 space-y-2;
+  }
+
+  .blog-content li {
+    @apply leading-relaxed;
+  }
+
+  /* Task Lists */
+  .blog-content ul[data-type="taskList"] {
+    @apply list-none ml-0 mb-6 space-y-2;
+  }
+
+  .blog-content ul[data-type="taskList"] li {
+    @apply flex items-start gap-2;
+  }
+
+  .blog-content ul[data-type="taskList"] li label {
+    @apply flex items-center gap-2 cursor-pointer;
+  }
+
+  .blog-content ul[data-type="taskList"] li input[type="checkbox"] {
+    @apply w-4 h-4 rounded border-border cursor-pointer;
+  }
+
+  .blog-content ul[data-type="taskList"] li input[type="checkbox"]:checked {
+    @apply bg-primary border-primary;
+  }
+
+  /* Highlights */
+  .blog-content mark {
+    @apply bg-yellow-200 dark:bg-yellow-900/50 px-1 rounded;
+  }
+
+  /* Images */
+  .blog-content img {
+    @apply rounded-lg my-8 w-full h-auto shadow-md;
+  }
+
+  /* Horizontal Rule */
+  .blog-content hr {
+    @apply my-8 border-border;
+  }
+
+  /* Text Alignment */
+  .blog-content [style*="text-align: center"] {
+    @apply text-center;
+  }
+
+  .blog-content [style*="text-align: right"] {
+    @apply text-right;
+  }
+
+  .blog-content [style*="text-align: left"] {
+    @apply text-left;
+  }
+
+  /* Tables */
+  .blog-content table {
+    @apply w-full border-collapse mb-6;
+  }
+
+  .blog-content th {
+    @apply bg-muted font-bold p-3 text-left border border-border;
+  }
+
+  .blog-content td {
+    @apply p-3 border border-border;
+  }
+}
+
 @layer utilities {
   .shadow-card {
     box-shadow: var(--shadow-card);

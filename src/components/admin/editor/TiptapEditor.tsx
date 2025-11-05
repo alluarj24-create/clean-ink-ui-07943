@@ -6,9 +6,10 @@ import { EditorProvider } from "@/context/EditorContext";
 interface TiptapEditorProps {
   content?: string;
   onUpdate?: (content: string) => void;
+  showToolbar?: boolean;
 }
 
-export function TiptapEditor({ content, onUpdate }: TiptapEditorProps) {
+export function TiptapEditor({ content, onUpdate, showToolbar = true }: TiptapEditorProps) {
   const editor = useTiptapEditor({ content, onUpdate });
 
   if (!editor) {
@@ -22,7 +23,7 @@ export function TiptapEditor({ content, onUpdate }: TiptapEditorProps) {
   return (
     <EditorProvider editor={editor}>
       <div className="relative border rounded-lg bg-background overflow-hidden">
-        <EditorToolbar editor={editor} />
+        {showToolbar && <EditorToolbar editor={editor} />}
         <EditorContent editor={editor} />
       </div>
     </EditorProvider>

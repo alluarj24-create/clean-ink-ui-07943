@@ -2,6 +2,9 @@ import { useParams } from "react-router-dom";
 import { Calendar, Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { AuthorBanner } from "@/components/blog/AuthorBanner";
+import { CommentSection } from "@/components/blog/CommentSection";
+import { RelatedBlogs } from "@/components/blog/RelatedBlogs";
 
 // Demo blog - replace with actual API call
 const demoBlog = {
@@ -15,18 +18,78 @@ const demoBlog = {
     <h2>The Rise of AI-Assisted Development</h2>
     <p>Artificial intelligence is transforming how developers write code. From intelligent code completion to automated testing and bug detection, AI tools are becoming indispensable partners in the development process.</p>
     
+    <blockquote>
+      <p>"AI is not replacing developers; it's amplifying their capabilities and allowing them to focus on creative problem-solving rather than repetitive tasks."</p>
+    </blockquote>
+    
+    <p>Tools like GitHub Copilot and ChatGPT have shown us just the beginning of what's possible. The next generation of AI-powered development tools will be even more sophisticated, understanding context better and providing more accurate suggestions.</p>
+    
     <h2>Server Components and Edge Computing</h2>
     <p>React Server Components and edge computing are revolutionizing application architecture. By moving computation closer to users and rendering on the server, we're seeing dramatic improvements in performance and user experience.</p>
+    
+    <pre><code>// Example of a Server Component
+async function BlogPost({ id }) {
+  const post = await db.posts.findById(id);
+  return (
+    &lt;article&gt;
+      &lt;h1&gt;{post.title}&lt;/h1&gt;
+      &lt;p&gt;{post.content}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}</code></pre>
+    
+    <p>This approach offers several benefits:</p>
+    <ul>
+      <li><strong>Reduced JavaScript bundle size</strong> - Server components don't ship to the client</li>
+      <li><strong>Direct database access</strong> - No need for API layers in many cases</li>
+      <li><strong>Improved SEO</strong> - Content is rendered on the server</li>
+      <li><strong>Better performance</strong> - Faster initial page loads</li>
+    </ul>
     
     <h2>The Jamstack Evolution</h2>
     <p>The Jamstack architecture continues to mature, with improved tooling and workflows that make it easier than ever to build fast, secure, and scalable web applications.</p>
     
+    <p>Modern frameworks like Next.js, Remix, and Astro are pushing the boundaries of what's possible with static site generation and incremental static regeneration. The line between static and dynamic is becoming increasingly blurred.</p>
+    
+    <h3>Key Jamstack Features</h3>
+    <ol>
+      <li>Pre-rendering for optimal performance</li>
+      <li>API-first approach for dynamic functionality</li>
+      <li>Git-based workflows for content management</li>
+      <li>Global CDN distribution for fast delivery</li>
+    </ol>
+    
+    <p>Here's an example of inline code: <code>const result = await fetchData();</code></p>
+    
+    <p>And here's some <mark>highlighted text</mark> to emphasize important points.</p>
+    
+    <h3>Task List for Adopting These Trends</h3>
+    <ul data-type="taskList">
+      <li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked=""><span></span></label><div><p>Learn about React Server Components</p></div></li>
+      <li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked=""><span></span></label><div><p>Explore edge computing platforms</p></div></li>
+      <li data-checked="false" data-type="taskItem"><label><input type="checkbox"><span></span></label><div><p>Experiment with AI coding assistants</p></div></li>
+      <li data-checked="false" data-type="taskItem"><label><input type="checkbox"><span></span></label><div><p>Build a Jamstack project</p></div></li>
+    </ul>
+    
     <p>These trends represent just the beginning of an exciting new chapter in web development. As developers, staying informed and adaptable will be key to success in this rapidly changing landscape.</p>
+    
+    <p style="text-align: center">This is centered text for emphasis.</p>
+    
+    <p>Remember: the best way to learn is by building. Start small, experiment with these technologies, and gradually incorporate them into your workflow.</p>
   `,
   tags: ["Web Development", "React", "AI", "Performance"],
   publishedAt: new Date().toISOString(),
   readingTime: 5,
   author: "Editorial Team"
+};
+
+const authorInfo = {
+  name: "Editorial Team",
+  bio: "A passionate developer and writer sharing insights on technology, personal growth, and everything in between.",
+  socialLinks: {
+    twitter: "https://twitter.com/example",
+    linkedin: "https://linkedin.com/in/example",
+  }
 };
 
 export default function BlogDetail() {
@@ -85,14 +148,14 @@ export default function BlogDetail() {
         </figure>
       )}
 
-      {/* Content */}
+      {/* Content with Enhanced Styling */}
       <div 
-        className="prose prose-lg max-w-none"
+        className="blog-content prose prose-lg dark:prose-invert max-w-none mb-12"
         dangerouslySetInnerHTML={{ __html: blog.content }}
       />
 
       {/* Footer Tags */}
-      <footer className="mt-12 pt-8 border-t border-border">
+      <footer className="mb-12 pt-8 border-t border-border">
         <div className="flex items-start gap-3">
           <Tag className="h-5 w-5 text-muted-foreground mt-1" />
           <div className="flex flex-wrap gap-2">
@@ -104,6 +167,19 @@ export default function BlogDetail() {
           </div>
         </div>
       </footer>
+
+      {/* Author Banner */}
+      <div className="mb-12">
+        <AuthorBanner {...authorInfo} />
+      </div>
+
+      {/* Comment Section */}
+      <div className="mb-12">
+        <CommentSection />
+      </div>
+
+      {/* Related Blogs */}
+      <RelatedBlogs />
     </article>
   );
 }
