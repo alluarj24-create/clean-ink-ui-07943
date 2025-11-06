@@ -162,12 +162,39 @@ All colors MUST be HSL.
     @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground;
   }
 
+  /* Code blocks with syntax highlighting */
   .blog-content pre {
-    @apply bg-muted p-4 rounded-lg overflow-x-auto mb-6 border border-border;
+    @apply relative bg-slate-900 dark:bg-slate-950 rounded-lg p-4 overflow-x-auto mb-6 border border-slate-800 dark:border-slate-700;
+  }
+  
+  .blog-content pre code {
+    @apply bg-transparent p-0 text-sm font-mono text-slate-50;
   }
 
-  .blog-content pre code {
-    @apply bg-transparent p-0 text-sm;
+  /* Syntax highlighting colors */
+  .blog-content pre code .keyword {
+    @apply text-purple-400;
+  }
+  
+  .blog-content pre code .string {
+    @apply text-green-400;
+  }
+  
+  .blog-content pre code .comment {
+    @apply text-slate-500 italic;
+  }
+  
+  .blog-content pre code .function {
+    @apply text-yellow-400;
+  }
+  
+  .blog-content pre code .variable {
+    @apply text-orange-400;
+  }
+
+  /* Copy button for code blocks */
+  .blog-content pre:hover .copy-button {
+    @apply opacity-100;
   }
 
   /* Blockquotes */
@@ -177,6 +204,11 @@ All colors MUST be HSL.
 
   .blog-content blockquote p {
     @apply mb-0;
+  }
+
+  .blog-content blockquote cite,
+  .blog-content blockquote footer {
+    @apply block text-sm text-muted-foreground/80 mt-3 not-italic text-right font-medium;
   }
 
   /* Lists */

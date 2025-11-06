@@ -1,6 +1,17 @@
 import { useState } from "react";
-import { ThumbsUp, MessageSquare, User } from "lucide-react";
+import { ThumbsUp, MessageSquare, User, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Comment as CommentType } from "@/types/comment.types";
 import { CommentInput } from "./CommentInput";
 
@@ -8,16 +19,42 @@ interface CommentProps {
   comment: CommentType;
   onLike: (id: string) => void;
   onReply: (id: string, content: string) => void;
+  onEdit: (id: string, content: string) => void;
+  onDelete: (id: string) => void;
   depth?: number;
 }
 
-export function Comment({ comment, onLike, onReply, depth = 0 }: CommentProps) {
+export function Comment({ comment, onLike, onReply, onEdit, onDelete, depth = 0 }: CommentProps) {
   const [showReplyInput, setShowReplyInput] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(comment.content);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const maxDepth = 2;
+  const isOwnComment = comment.author === "You";
 
   const handleReply = (content: string) => {
     onReply(comment.id, content);
     setShowReplyInput(false);
+  };
+
+  const handleEdit = () => {
+    if (editContent.trim() && editContent !== comment.content) {
+      onEdit(comment.id, editContent);
+      setIsEditing(false);
+    } else {
+      setIsEditing(false);
+      setEditContent(comment.content);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditContent(comment.content);
+  };
+
+  const handleDelete = () => {
+    onDelete(comment.id);
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -42,35 +79,83 @@ export function Comment({ comment, onLike, onReply, depth = 0 }: CommentProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-2 mb-1">
             <span className="font-medium text-sm">{comment.author}</span>
-            <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+            <span className="text-xs text-muted-foreground">
+              {comment.timestamp}
+              {comment.isEdited && <span className="ml-1">(edited)</span>}
+            </span>
           </div>
           
-          <p className="text-sm text-foreground mb-2">{comment.content}</p>
+          {isEditing ? (
+            <div className="space-y-2">
+              <Textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className="min-h-[80px] text-sm"
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleEdit}>
+                  Save
+                </Button>
+                <Button size="sm" variant="ghost" onClick={handleCancelEdit}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-foreground mb-2">{comment.content}</p>
+          )}
 
           {/* Actions */}
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2 gap-1"
-              onClick={() => onLike(comment.id)}
-            >
-              <ThumbsUp className={`h-3 w-3 ${comment.isLiked ? 'fill-primary text-primary' : ''}`} />
-              <span className="text-xs">{comment.likes}</span>
-            </Button>
-
-            {depth < maxDepth && (
+          {!isEditing && (
+            <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-7 px-2 gap-1"
-                onClick={() => setShowReplyInput(!showReplyInput)}
+                onClick={() => onLike(comment.id)}
               >
-                <MessageSquare className="h-3 w-3" />
-                <span className="text-xs">Reply</span>
+                <ThumbsUp className={`h-3 w-3 ${comment.isLiked ? 'fill-primary text-primary' : ''}`} />
+                <span className="text-xs">{comment.likes}</span>
               </Button>
-            )}
-          </div>
+
+              {depth < maxDepth && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 gap-1"
+                  onClick={() => setShowReplyInput(!showReplyInput)}
+                >
+                  <MessageSquare className="h-3 w-3" />
+                  <span className="text-xs">Reply</span>
+                </Button>
+              )}
+
+              {isOwnComment && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 gap-1"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Pencil className="h-3 w-3" />
+                    <span className="text-xs">Edit</span>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 gap-1 text-destructive hover:text-destructive"
+                    onClick={() => setShowDeleteDialog(true)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span className="text-xs">Delete</span>
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Reply Input */}
           {showReplyInput && (
@@ -93,6 +178,8 @@ export function Comment({ comment, onLike, onReply, depth = 0 }: CommentProps) {
                   comment={reply}
                   onLike={onLike}
                   onReply={onReply}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
                   depth={depth + 1}
                 />
               ))}
@@ -100,6 +187,24 @@ export function Comment({ comment, onLike, onReply, depth = 0 }: CommentProps) {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

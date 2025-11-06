@@ -6,5 +6,6 @@ export interface Comment {
   timestamp: string;
   likes: number;
   isLiked?: boolean;
+  isEdited?: boolean;
   replies?: Comment[];
 }

@@ -4,6 +4,7 @@ import { Comment as CommentType } from "@/types/comment.types";
 import { Comment } from "./Comment";
 import { CommentInput } from "./CommentInput";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "@/hooks/use-toast";
 
 // Mock data - replace with actual API call
 const mockComments: CommentType[] = [
@@ -128,6 +129,51 @@ export function CommentSection() {
     setComments(addReplyToComment(comments));
   };
 
+  const handleEdit = (id: string, content: string) => {
+    const updateComment = (comments: CommentType[]): CommentType[] => {
+      return comments.map(comment => {
+        if (comment.id === id) {
+          return {
+            ...comment,
+            content,
+            isEdited: true,
+          };
+        }
+        if (comment.replies) {
+          return {
+            ...comment,
+            replies: updateComment(comment.replies),
+          };
+        }
+        return comment;
+      });
+    };
+    setComments(updateComment(comments));
+    toast({
+      title: "Comment updated",
+      description: "Your comment has been successfully updated.",
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    const deleteComment = (comments: CommentType[]): CommentType[] => {
+      return comments.filter(comment => {
+        if (comment.id === id) {
+          return false;
+        }
+        if (comment.replies) {
+          comment.replies = deleteComment(comment.replies);
+        }
+        return true;
+      });
+    };
+    setComments(deleteComment(comments));
+    toast({
+      title: "Comment deleted",
+      description: "Your comment has been successfully deleted.",
+    });
+  };
+
   return (
     <div className="border border-border rounded-lg p-6 bg-background">
       <div className="flex items-center gap-2 mb-6">
@@ -152,6 +198,8 @@ export function CommentSection() {
                 comment={comment}
                 onLike={handleLike}
                 onReply={handleReply}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>

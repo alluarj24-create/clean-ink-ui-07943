@@ -49,7 +49,7 @@ export function RelatedBlogs() {
     <div className="py-8">
       <h3 className="font-serif text-2xl font-bold mb-6">You Might Also Like</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {relatedBlogs.map((blog) => (
           <Link key={blog._id} to={`/blog/${blog.slug}`}>
             <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] h-full">

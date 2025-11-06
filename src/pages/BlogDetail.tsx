@@ -1,10 +1,15 @@
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Calendar, Clock, Tag } from "lucide-react";
+import { Calendar, Clock, Tag, Copy, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { AuthorBanner } from "@/components/blog/AuthorBanner";
 import { CommentSection } from "@/components/blog/CommentSection";
 import { RelatedBlogs } from "@/components/blog/RelatedBlogs";
+import { BlogSidebar } from "@/components/blog/BlogSidebar";
+import { PopularPostsSidebar } from "@/components/blog/PopularPostsSidebar";
+import { toast } from "@/hooks/use-toast";
 
 // Demo blog - replace with actual API call
 const demoBlog = {
@@ -20,6 +25,7 @@ const demoBlog = {
     
     <blockquote>
       <p>"AI is not replacing developers; it's amplifying their capabilities and allowing them to focus on creative problem-solving rather than repetitive tasks."</p>
+      <cite>— Sam Altman, CEO of OpenAI</cite>
     </blockquote>
     
     <p>Tools like GitHub Copilot and ChatGPT have shown us just the beginning of what's possible. The next generation of AI-powered development tools will be even more sophisticated, understanding context better and providing more accurate suggestions.</p>
@@ -48,6 +54,11 @@ async function BlogPost({ id }) {
     
     <h2>The Jamstack Evolution</h2>
     <p>The Jamstack architecture continues to mature, with improved tooling and workflows that make it easier than ever to build fast, secure, and scalable web applications.</p>
+    
+    <blockquote>
+      <p>"The future of the web is pre-rendered, distributed, and lightning fast."</p>
+      <cite>— Mathias Biilmann, CEO of Netlify</cite>
+    </blockquote>
     
     <p>Modern frameworks like Next.js, Remix, and Astro are pushing the boundaries of what's possible with static site generation and incremental static regeneration. The line between static and dynamic is becoming increasingly blurred.</p>
     
@@ -94,9 +105,56 @@ const authorInfo = {
 
 export default function BlogDetail() {
   const { slug } = useParams();
+  const commentSectionRef = useRef<HTMLDivElement>(null);
+  
+  // Blog engagement state
+  const [likeCount, setLikeCount] = useState(42);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   
   // In real app: const { data, isLoading, error } = useGetBlogBySlug(slug);
   const blog = demoBlog;
+
+  // Add copy buttons to code blocks
+  useEffect(() => {
+    const codeBlocks = document.querySelectorAll('.blog-content pre');
+    
+    codeBlocks.forEach((block) => {
+      const htmlBlock = block as HTMLElement;
+      
+      // Check if button already exists
+      if (htmlBlock.querySelector('.copy-button')) return;
+      
+      const button = document.createElement('button');
+      button.className = 'copy-button absolute top-2 right-2 p-2 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all opacity-0';
+      button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+      button.setAttribute('aria-label', 'Copy code');
+      
+      button.addEventListener('click', async () => {
+        const code = htmlBlock.querySelector('code')?.textContent || '';
+        try {
+          await navigator.clipboard.writeText(code);
+          button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+          toast({
+            title: "Code copied!",
+            description: "Code has been copied to clipboard.",
+          });
+          setTimeout(() => {
+            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+          }, 2000);
+        } catch (error) {
+          toast({
+            title: "Failed to copy",
+            description: "Please try again.",
+            variant: "destructive",
+          });
+        }
+      });
+      
+      htmlBlock.style.position = 'relative';
+      htmlBlock.appendChild(button);
+    });
+  }, [blog.content]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -106,80 +164,124 @@ export default function BlogDetail() {
     });
   };
 
+  const handleLike = () => {
+    if (isLiked) {
+      setLikeCount(prev => prev - 1);
+      setIsLiked(false);
+    } else {
+      setLikeCount(prev => prev + 1);
+      setIsLiked(true);
+      toast({
+        title: "Thanks for the love! ❤️",
+        description: "You liked this post.",
+      });
+    }
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    toast({
+      title: isBookmarked ? "Bookmark removed" : "Post bookmarked!",
+      description: isBookmarked ? "Removed from your reading list." : "Added to your reading list.",
+    });
+  };
+
+  const scrollToComments = () => {
+    commentSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
-      <header className="mb-12">
-        <div className="flex flex-wrap gap-2 mb-6">
-          {blog.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        
-        <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 leading-tight">
-          {blog.title}
-        </h1>
-        
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{blog.author}</span>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-1.5">
-            <Calendar className="h-4 w-4" />
-            <time>{formatDate(blog.publishedAt)}</time>
-          </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4" />
-            <span>{blog.readingTime} min read</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Cover Image */}
-      {blog.coverImage && (
-        <figure className="mb-12 -mx-4 sm:mx-0">
-          <img
-            src={blog.coverImage}
-            alt={blog.title}
-            className="w-full h-auto rounded-lg shadow-lg"
-          />
-        </figure>
-      )}
-
-      {/* Content with Enhanced Styling */}
-      <div 
-        className="blog-content prose prose-lg dark:prose-invert max-w-none mb-12"
-        dangerouslySetInnerHTML={{ __html: blog.content }}
+    <>
+      {/* Blog Engagement Sidebar (Left) */}
+      <BlogSidebar
+        likeCount={likeCount}
+        isLiked={isLiked}
+        isBookmarked={isBookmarked}
+        onLike={handleLike}
+        onBookmark={handleBookmark}
+        onScrollToComments={scrollToComments}
       />
 
-      {/* Footer Tags */}
-      <footer className="mb-12 pt-8 border-t border-border">
-        <div className="flex items-start gap-3">
-          <Tag className="h-5 w-5 text-muted-foreground mt-1" />
-          <div className="flex flex-wrap gap-2">
-            {blog.tags.map((tag) => (
-              <Badge key={tag} variant="outline">
-                {tag}
-              </Badge>
-            ))}
+      <div className="flex gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Main Content */}
+        <article className="flex-1 max-w-4xl">
+          {/* Header */}
+          <header className="mb-12">
+            <div className="flex flex-wrap gap-2 mb-6">
+              {blog.tags.map((tag) => (
+                <Badge key={tag} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 leading-tight">
+              {blog.title}
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{blog.author}</span>
+              <Separator orientation="vertical" className="h-4" />
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4" />
+                <time>{formatDate(blog.publishedAt)}</time>
+              </div>
+              <Separator orientation="vertical" className="h-4" />
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4" />
+                <span>{blog.readingTime} min read</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Cover Image */}
+          {blog.coverImage && (
+            <figure className="mb-12 -mx-4 sm:mx-0">
+              <img
+                src={blog.coverImage}
+                alt={blog.title}
+                className="w-full h-auto rounded-lg shadow-lg"
+              />
+            </figure>
+          )}
+
+          {/* Content with Enhanced Styling */}
+          <div 
+            className="blog-content prose prose-lg dark:prose-invert max-w-none mb-12"
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+          />
+
+          {/* Footer Tags */}
+          <footer className="mb-12 pt-8 border-t border-border">
+            <div className="flex items-start gap-3">
+              <Tag className="h-5 w-5 text-muted-foreground mt-1" />
+              <div className="flex flex-wrap gap-2">
+                {blog.tags.map((tag) => (
+                  <Badge key={tag} variant="outline">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </footer>
+
+          {/* Author Banner */}
+          <div className="mb-12">
+            <AuthorBanner {...authorInfo} />
           </div>
-        </div>
-      </footer>
 
-      {/* Author Banner */}
-      <div className="mb-12">
-        <AuthorBanner {...authorInfo} />
+          {/* Comment Section */}
+          <div ref={commentSectionRef} className="mb-12">
+            <CommentSection />
+          </div>
+
+          {/* Related Blogs */}
+          <RelatedBlogs />
+        </article>
+
+        {/* Popular Posts Sidebar (Right) */}
+        <PopularPostsSidebar />
       </div>
-
-      {/* Comment Section */}
-      <div className="mb-12">
-        <CommentSection />
-      </div>
-
-      {/* Related Blogs */}
-      <RelatedBlogs />
-    </article>
+    </>
   );
 }
