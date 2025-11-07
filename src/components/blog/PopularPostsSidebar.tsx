@@ -56,7 +56,7 @@ const popularPosts: PopularPost[] = [
 
 export function PopularPostsSidebar() {
   return (
-    <div className="hidden xl:block w-80 sticky top-24 self-start">
+    <div className="w-full">
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <Flame className="h-5 w-5 text-orange-500" />

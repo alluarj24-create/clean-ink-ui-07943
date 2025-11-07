@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { AuthorBanner } from "@/components/blog/AuthorBanner";
 import { CommentSection } from "@/components/blog/CommentSection";
 import { RelatedBlogs } from "@/components/blog/RelatedBlogs";
-import { BlogSidebar } from "@/components/blog/BlogSidebar";
+import { BlogEngagementBar } from "@/components/blog/BlogEngagementBar";
 import { PopularPostsSidebar } from "@/components/blog/PopularPostsSidebar";
 import { toast } from "@/hooks/use-toast";
 
@@ -191,20 +191,23 @@ export default function BlogDetail() {
   };
 
   return (
-    <>
-      {/* Blog Engagement Sidebar (Left) */}
-      <BlogSidebar
-        likeCount={likeCount}
-        isLiked={isLiked}
-        isBookmarked={isBookmarked}
-        onLike={handleLike}
-        onBookmark={handleBookmark}
-        onScrollToComments={scrollToComments}
-      />
+    <div className="max-w-[1600px] mx-auto px-4 lg:px-8 py-12">
+      <div className="grid lg:grid-cols-[320px_1fr_320px] gap-8">
+        {/* Left: Reserved space for visual balance */}
+        <div className="hidden lg:block" />
+        
+        {/* Center: Main blog content */}
+        <article className="max-w-[800px] mx-auto w-full">
+          {/* Sticky Engagement Bar */}
+          <BlogEngagementBar
+            likeCount={likeCount}
+            isLiked={isLiked}
+            isBookmarked={isBookmarked}
+            onLike={handleLike}
+            onBookmark={handleBookmark}
+            onScrollToComments={scrollToComments}
+          />
 
-      <div className="flex gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Main Content */}
-        <article className="flex-1 max-w-4xl">
           {/* Header */}
           <header className="mb-12">
             <div className="flex flex-wrap gap-2 mb-6">
@@ -275,13 +278,26 @@ export default function BlogDetail() {
             <CommentSection />
           </div>
 
+          {/* Popular Posts - Mobile Only (below comments) */}
+          <div className="lg:hidden mb-12">
+            <PopularPostsSidebar />
+          </div>
+
           {/* Related Blogs */}
           <RelatedBlogs />
         </article>
 
-        {/* Popular Posts Sidebar (Right) */}
-        <PopularPostsSidebar />
+        {/* Right: Popular Posts Sidebar - Desktop Only */}
+        <aside className="hidden lg:block">
+          {/* Future: Table of Contents will go here */}
+          
+          {/* Gap for ads */}
+          <div className="mb-8" />
+          
+          {/* Popular Posts */}
+          <PopularPostsSidebar />
+        </aside>
       </div>
-    </>
+    </div>
   );
 }
