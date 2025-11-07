@@ -29,7 +29,6 @@ export function Comment({ comment, onLike, onReply, onEdit, onDelete, depth = 0 
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const maxDepth = 2;
   const isOwnComment = comment.author === "You";
 
   const handleReply = (content: string) => {
@@ -119,17 +118,15 @@ export function Comment({ comment, onLike, onReply, onEdit, onDelete, depth = 0 
                 <span className="text-xs">{comment.likes}</span>
               </Button>
 
-              {depth < maxDepth && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 gap-1"
-                  onClick={() => setShowReplyInput(!showReplyInput)}
-                >
-                  <MessageSquare className="h-3 w-3" />
-                  <span className="text-xs">Reply</span>
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 gap-1"
+                onClick={() => setShowReplyInput(!showReplyInput)}
+              >
+                <MessageSquare className="h-3 w-3" />
+                <span className="text-xs">Reply</span>
+              </Button>
 
               {isOwnComment && (
                 <>

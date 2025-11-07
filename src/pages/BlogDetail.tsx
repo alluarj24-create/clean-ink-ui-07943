@@ -9,6 +9,7 @@ import { CommentSection } from "@/components/blog/CommentSection";
 import { RelatedBlogs } from "@/components/blog/RelatedBlogs";
 import { BlogEngagementBar } from "@/components/blog/BlogEngagementBar";
 import { PopularPostsSidebar } from "@/components/blog/PopularPostsSidebar";
+import { TableOfContents } from "@/components/blog/TableOfContents";
 import { toast } from "@/hooks/use-toast";
 
 // Demo blog - replace with actual API call
@@ -274,7 +275,7 @@ export default function BlogDetail() {
           </div>
 
           {/* Comment Section */}
-          <div ref={commentSectionRef} className="mb-12">
+          <div ref={commentSectionRef} className="mb-12 max-h-[800px] overflow-y-auto border border-border rounded-lg p-6">
             <CommentSection />
           </div>
 
@@ -288,11 +289,12 @@ export default function BlogDetail() {
         </article>
 
         {/* Right: Popular Posts Sidebar - Desktop Only */}
-        <aside className="hidden lg:block">
-          {/* Future: Table of Contents will go here */}
+        <aside className="hidden lg:block space-y-8">
+          {/* Table of Contents */}
+          <TableOfContents />
           
           {/* Gap for ads */}
-          <div className="mb-8" />
+          <div className="h-8" />
           
           {/* Popular Posts */}
           <PopularPostsSidebar />
