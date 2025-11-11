@@ -10,6 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { DateTimePicker } from "@/components/admin/editor/DateTimePicker";
 import { TiptapEditor } from "@/components/admin/editor/TiptapEditor";
+import { BlogPreview } from "@/components/admin/editor/BlogPreview";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function EditDraftPage() {
   const { id } = useParams();
@@ -71,8 +73,8 @@ export default function EditDraftPage() {
           </div>
         </div>
 
-        {/* Main Editor Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Editor Grid - Three Columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_400px] gap-6">
           {/* Left Panel - Metadata */}
           <div className="lg:col-span-1 space-y-6">
             {/* Title Card */}
@@ -209,8 +211,8 @@ export default function EditDraftPage() {
             </Card>
           </div>
 
-          {/* Right Panel - Editor */}
-          <div className="lg:col-span-2">
+          {/* Middle Panel - Editor */}
+          <div>
             <Card className="h-full">
               <CardHeader>
                 <CardTitle className="text-lg">Content Editor</CardTitle>
@@ -228,6 +230,23 @@ export default function EditDraftPage() {
                   <span>{content.length} characters</span>
                   <span className="text-xs">Auto-saved</span>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Panel - Live Preview */}
+          <div className="hidden lg:block">
+            <Card className="sticky top-6 h-[calc(100vh-8rem)]">
+              <CardContent className="p-0 h-full">
+                <ScrollArea className="h-full">
+                  <div className="p-6">
+                    <BlogPreview
+                      title={title}
+                      coverImage={coverImage}
+                      content={content}
+                    />
+                  </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </div>
