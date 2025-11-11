@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ArrowLeft, Send, Calendar, Image as ImageIcon, Tag as TagIcon } from "lucide-react";
+import { ArrowLeft, Send, Calendar, Image as ImageIcon, Tag as TagIcon, Plus, X } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { DateTimePicker } from "@/components/admin/editor/DateTimePicker";
 import { TiptapEditor } from "@/components/admin/editor/TiptapEditor";
 import { BlogPreview } from "@/components/admin/editor/BlogPreview";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 export default function EditDraftPage() {
   const { id } = useParams();
@@ -74,23 +75,22 @@ export default function EditDraftPage() {
         </div>
 
         {/* Main Editor Grid - Three Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_400px] gap-6">
-          {/* Left Panel - Metadata */}
-          <div className="lg:col-span-1 space-y-6">
+        <div className="flex gap-6">
+          {/* Left Panel - Metadata - Fixed Width */}
+          <div className="w-80 hidden lg:block space-y-6 flex-shrink-0">
             {/* Title Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Blog Details</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent>
                 <div className="space-y-2">
                   <Label htmlFor="title">Title</Label>
                   <Input
                     id="title"
-                    placeholder="Enter blog title..."
+                    placeholder="Enter blog title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="text-base"
                   />
                 </div>
               </CardContent>
@@ -99,65 +99,46 @@ export default function EditDraftPage() {
             {/* Cover Image Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <ImageIcon className="h-5 w-5" />
-                  Cover Image
-                </CardTitle>
+                <CardTitle className="text-lg">Cover Image</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent>
                 <div className="space-y-2">
-                  <Label htmlFor="cover">Image URL</Label>
+                  <Label htmlFor="coverImage">Image URL</Label>
                   <Input
-                    id="cover"
+                    id="coverImage"
                     placeholder="https://example.com/image.jpg"
                     value={coverImage}
                     onChange={(e) => setCoverImage(e.target.value)}
                   />
+                  {coverImage && (
+                    <div className="mt-3 rounded-lg overflow-hidden border">
+                      <img
+                        src={coverImage}
+                        alt="Cover preview"
+                        className="w-full h-32 object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg";
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
-                {coverImage && (
-                  <div className="rounded-lg overflow-hidden border">
-                    <img
-                      src={coverImage}
-                      alt="Cover preview"
-                      className="w-full h-32 object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = "/placeholder.svg";
-                      }}
-                    />
-                  </div>
-                )}
               </CardContent>
             </Card>
 
             {/* Tags Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TagIcon className="h-5 w-5" />
-                  Tags
-                </CardTitle>
+                <CardTitle className="text-lg">Tags</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="gap-1">
-                      {tag}
-                      <button
-                        onClick={() => handleRemoveTag(tag)}
-                        className="ml-1 hover:text-destructive"
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-                <Separator />
+                {/* Add Tag Input */}
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Add a tag..."
+                    placeholder="Add a tag"
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    onKeyDown={(e) => {
+                    onKeyPress={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
                         handleAddTag();
@@ -165,11 +146,30 @@ export default function EditDraftPage() {
                     }}
                   />
                   <Button onClick={handleAddTag} size="sm">
-                    Add
+                    <Plus className="h-4 w-4" />
                   </Button>
                 </div>
+
+                {/* Selected Tags */}
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="gap-1">
+                        {tag}
+                        <button
+                          onClick={() => handleRemoveTag(tag)}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* Suggested Tags */}
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Suggested Tags</Label>
+                  <p className="text-xs text-muted-foreground">Suggested tags:</p>
                   <div className="flex flex-wrap gap-2">
                     {availableTags
                       .filter((tag) => !tags.includes(tag))
@@ -177,10 +177,13 @@ export default function EditDraftPage() {
                         <Badge
                           key={tag}
                           variant="outline"
-                          className="cursor-pointer hover:bg-accent"
-                          onClick={() => setTags([...tags, tag])}
+                          className="cursor-pointer hover:bg-secondary"
+                          onClick={() => {
+                            setTags([...tags, tag]);
+                          }}
                         >
-                          + {tag}
+                          {tag}
+                          <Plus className="ml-1 h-3 w-3" />
                         </Badge>
                       ))}
                   </div>
@@ -191,64 +194,70 @@ export default function EditDraftPage() {
             {/* Schedule Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Schedule
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <DateTimePicker value={scheduleDate} onChange={setScheduleDate} />
-                <Button
-                  onClick={handleSchedule}
-                  variant="secondary"
-                  className="w-full"
-                  disabled={!scheduleDate}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Schedule Post
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Middle Panel - Editor */}
-          <div>
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-lg">Content Editor</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  What you see is what you get - format your content with the floating menu
-                </p>
+                <CardTitle className="text-lg">Schedule</CardTitle>
               </CardHeader>
               <CardContent>
-                <TiptapEditor 
-                  content={content}
-                  onUpdate={(html) => setContent(html)}
-                  showToolbar={false}
+                <DateTimePicker
+                  value={scheduleDate}
+                  onChange={setScheduleDate}
                 />
-                <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground border-t pt-4">
-                  <span>{content.length} characters</span>
-                  <span className="text-xs">Auto-saved</span>
-                </div>
+                {scheduleDate && (
+                  <Button
+                    onClick={handleSchedule}
+                    className="w-full mt-4"
+                    variant="outline"
+                  >
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Schedule for {scheduleDate.toLocaleDateString()}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Panel - Live Preview */}
-          <div className="hidden lg:block">
-            <Card className="sticky top-6 h-[calc(100vh-8rem)]">
-              <CardContent className="p-0 h-full">
-                <ScrollArea className="h-full">
-                  <div className="p-6">
-                    <BlogPreview
-                      title={title}
-                      coverImage={coverImage}
+          {/* Resizable Editor and Preview */}
+          <div className="flex-1 min-w-0">
+            <ResizablePanelGroup direction="horizontal" className="h-full">
+              {/* Editor Panel */}
+              <ResizablePanel defaultSize={55} minSize={30}>
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Content Editor</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Write your blog content using the rich text editor below
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <TiptapEditor
                       content={content}
+                      onUpdate={(newContent) => {
+                        setContent(newContent);
+                      }}
                     />
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </ResizablePanel>
+
+              {/* Resize Handle */}
+              <ResizableHandle withHandle className="hidden lg:flex" />
+
+              {/* Preview Panel */}
+              <ResizablePanel defaultSize={45} minSize={30} className="hidden lg:block">
+                <Card className="h-[calc(100vh-8rem)]">
+                  <CardContent className="p-0 h-full">
+                    <ScrollArea className="h-full">
+                      <div className="p-6">
+                        <BlogPreview
+                          title={title}
+                          coverImage={coverImage}
+                          content={content}
+                        />
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
         </div>
       </div>
